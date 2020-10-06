@@ -117,16 +117,19 @@ class HBaseRegionCollector(diamond.collector.Collector):
 
     def collect(self):
         url = self.config['url']
-        response = urlopen(url)
-        content = json.loads(response.read().decode())
+        try:
+            response = urlopen(url)
+            content = json.loads(response.read().decode())
 
-        for bean in content['beans']:
-            bean_name = bean['name']
-            if not bean_name in self.config['metrics']:
-                continue
-            func = self.BEANS_MAP[bean_name]
-            for path, value in func(bean):
-                self.publish(path, value)
+            for bean in content['beans']:
+                bean_name = bean['name']
+                if not bean_name in self.config['metrics']:
+                    continue
+                func = self.BEANS_MAP[bean_name]
+                for path, value in func(bean):
+                    self.publish(path, value)
+        except URLError:
+            pass
 
     @bean_metric("runtime")
     def java_runtime(self, data):

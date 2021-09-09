@@ -4,7 +4,7 @@
 Diamond collector for HBase Regionserver metrics
 """
 
-from urllib2 import urlopen
+from urllib2 import urlopen, URLError
 import diamond.collector
 import re
 import json
@@ -22,7 +22,9 @@ def bean_metric(prefix):
                             path.lower() == "name" or \
                             path.lower() == "objectname":
                         continue
-                    if not type(value) is int:
+                    try:
+                        value = int(value)
+                    except:
                         continue
                     path = path.replace(".", "_")
                     path = ".".join((prefix, path))

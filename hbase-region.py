@@ -93,7 +93,8 @@ class HBaseRegionCollector(diamond.collector.Collector):
             "Hadoop:service=HBase,name=RegionServer,sub=Tables": self.hbase_region_tables,
             "Hadoop:service=HBase,name=RegionServer,sub=Server": self.hbase_region_server,
             "Hadoop:service=HBase,name=RegionServer,sub=IPC": self.hbase_region_ipc,
-            "Hadoop:service=HBase,name=RegionServer,sub=PhoenixIndexer": self.hbase_region_phoenixindexer
+            "Hadoop:service=HBase,name=RegionServer,sub=PhoenixIndexer": self.hbase_region_phoenixindexer,
+            "Hadoop:service=HBase,name=phoenix": self.hbase_region_phoenix
         }
         super(HBaseRegionCollector, self).__init__(*args, **kwargs)
 
@@ -265,5 +266,10 @@ class HBaseRegionCollector(diamond.collector.Collector):
 
     @bean_metric("phoenixindexer")
     def hbase_region_phoenixindexer(self, data):
+        for key, value in data.iteritems():
+            yield (key, value)
+
+    @bean_metric("phoenix")
+    def hbase_region_phoenix(self, data):
         for key, value in data.iteritems():
             yield (key, value)
